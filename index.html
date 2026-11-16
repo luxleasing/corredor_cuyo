@@ -17,10 +17,7 @@
   <!-- HEADER -->
   <header class="w-full z-30 relative shrink-0 bg-slate-900 text-white shadow-md h-[54px] flex items-center justify-between px-4">
     <div class="flex items-center gap-3 shrink-0">
-      <img src="logo_lux_byn.png" alt="LuxLeasing" class="h-7 w-auto" onerror="this.style.display='none'">
-      <span class="font-bold tracking-widest text-sm text-white">LUXLEASING</span>
-      <div class="h-6 border-l border-white/20 hidden sm:block"></div>
-      <h1 class="text-[13px] font-medium opacity-90 hidden sm:block">Corredor Cuyo · RN7</h1>
+      <h1 class="text-sm font-bold tracking-widest uppercase text-white">CORREDOR CUYO</h1>
     </div>
     
     <div class="flex items-center gap-4 text-xs">
@@ -36,20 +33,20 @@
   </header>
 
   <!-- CONTROLES Y KPIs -->
-  <div class="absolute top-[65px] left-0 w-full z-20 px-3 flex flex-col gap-3 pointer-events-none">
+  <div class="absolute top-[65px] left-0 w-full z-20 px-3 sm:px-4 flex flex-col sm:flex-row justify-between items-start pointer-events-none gap-3 sm:gap-0">
     
-    <!-- Botones de Capa -->
-    <div class="flex gap-2 pointer-events-auto bg-white p-1 rounded-lg shadow-sm border border-slate-200 self-start">
+    <!-- Botones de Capa (Izquierda) -->
+    <div class="flex gap-2 pointer-events-auto bg-white p-1.5 rounded-lg shadow-sm border border-slate-200">
       <button id="btn-este" class="layer-btn active" onclick="toggleLayer('este')">
-        <span class="dot led"></span> <span class="hidden xs:inline">Tramo</span> Este
+        Tramo Este
       </button>
       <button id="btn-oeste" class="layer-btn active" onclick="toggleLayer('oeste')">
-        <span class="dot sodio"></span> <span class="hidden xs:inline">Tramo</span> Oeste
+        Tramo Oeste
       </button>
     </div>
 
-    <!-- Tarjetas KPI (Grid de 2 columnas para que entren siempre) -->
-    <div class="grid grid-cols-2 gap-2 w-full max-w-[450px] pointer-events-auto">
+    <!-- Tarjetas KPI (Derecha en PC, Abajo en Mobile) -->
+    <div class="grid grid-cols-2 gap-2 w-full sm:w-auto pointer-events-auto max-w-sm sm:max-w-none">
       <!-- KPI Este -->
       <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-2 sm:p-3 flex flex-col justify-between">
         <div class="text-[10px] sm:text-xs font-bold text-slate-800 border-b border-slate-100 pb-1 mb-1.5 leading-tight">
