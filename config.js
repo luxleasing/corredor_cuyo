@@ -1,44 +1,29 @@
 window.LUX_CONFIG = {
   municipio: {
-    nombre: 'Corredor Cuyo · RN7',
-    tituloAplicacion: 'Corredor Cuyo · Tramos Este y Oeste',
-    mapaInicial: { center: [-68.55, -32.90], zoom: 9 }
+    center: [-68.55, -32.90],
+    zoom: 10
   },
-
   fuentes: {
     corredor: './corredor_cuyo_2026_wgs84.geojson'
   },
-
   tramos: {
-    este:  { key: 'Este (Límite SL-Mza - Palmira)', label: 'Tramo Este',  sublabel: 'Límite SL-Mza → Palmira' },
-    oeste: { key: 'Oeste(Palmira - Las Cuevas)',    label: 'Tramo Oeste', sublabel: 'Palmira → Las Cuevas' }
+    este: 'Este (Límite SL-Mza - Palmira)',
+    oeste: 'Oeste(Palmira - Las Cuevas)'
   },
-
   campos: {
-    sector:     'sector',
-    tecnologia: ['Luminaria', 'luminaria', 'LUMINARIA'],
-    potencia:   ['Potencia', 'potencia', 'POTENCIA', 'pot', 'watts', 'WATTS']
+    sector: 'sector',
+    tecnologia: 'Luminaria',
+    potencia: 'Potencia'
   },
-
   simbologia: {
-    LED:   '#22d3ee',  // cian
-    SODIO: '#e2f916',  // amarillo
-    FALTA: '#f43f5e',  // rojo/rosado
-    OTROS: '#94a3b8'   // gris
+    LED: '#22d3ee',
+    SODIO: '#e2f916',
+    FALTA: '#f43f5e',
+    OTROS: '#94a3b8'
   },
-
-  consumo: {
-    horasDiarias: 11,
-    diasMes: 30,
-    tarifaKwh: 85,
-    potenciaLEDReemplazoW: 150,
-    potenciaSodioAsumidaW: 400,
-    factorCO2kgPorKwh: 0.42
-  },
-
   estilosMapa: {
     light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
-    dark:  'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+    dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     satellite: {
       version: 8,
       sources: {
