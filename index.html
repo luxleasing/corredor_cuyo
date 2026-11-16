@@ -14,7 +14,6 @@
 </head>
 <body class="h-screen flex flex-col overflow-hidden bg-slate-50 text-slate-800">
 
-  <!-- HEADER -->
   <header class="w-full z-30 relative shrink-0 bg-slate-900 text-white shadow-md h-[54px] flex items-center justify-between px-3 sm:px-4">
     <div class="flex items-center gap-2 sm:gap-3 shrink-0">
       <a href="https://www.luxleasing.com.ar/" target="_blank" class="flex items-center hover:opacity-80 transition shrink-0">
@@ -29,16 +28,13 @@
     <div class="flex items-center gap-4 text-xs shrink-0 ml-2">
       <select id="map-style-select" class="bg-slate-800 text-white border border-slate-700 rounded px-1.5 py-1 outline-none text-[10px] sm:text-xs cursor-pointer">
         <option value="google">Google Satelital</option>
-        <option value="satellite">Esri Satelital</option>
-        <option value="light">Claro</option>
-        <option value="dark">Oscuro</option>
+        <option value="light">Mapa Vectorial (Claro)</option>
+        <option value="dark">Mapa Vectorial (Oscuro)</option>
       </select>
     </div>
   </header>
 
-  <!-- CONTROLES Y KPIs -->
   <div class="absolute top-[65px] left-0 w-full z-20 px-3 sm:px-4 flex flex-col sm:flex-row justify-between items-start pointer-events-none gap-3 sm:gap-0">
-    
     <div class="flex gap-2 pointer-events-auto bg-white p-1.5 rounded-lg shadow-sm border border-slate-200">
       <button id="btn-este" class="layer-btn active" onclick="toggleLayer('este')">Tramo Este</button>
       <button id="btn-oeste" class="layer-btn active" onclick="toggleLayer('oeste')">Tramo Oeste</button>
