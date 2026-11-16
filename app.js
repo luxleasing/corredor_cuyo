@@ -28,7 +28,7 @@ function toggleLayer(tramo) {
 function agregarCapas() {
   if (!map.getSource('puntos')) return;
 
-  // PUNTOS MÁS GRANDES: De lejos miden 7px, de cerca bajan a 3px.
+  // PUNTOS MÁS GRANDES (7px lejos, 3px cerca)
   const radioExpr = ['interpolate', ['linear'], ['zoom'], 8, 7, 12, 5, 15, 3];
   
   const colorExpr = [
@@ -72,7 +72,8 @@ map = new maplibregl.Map({
   zoom: CONFIG.municipio.zoom
 });
 
-map.addControl(new maplibregl.NavigationControl(), 'top-right');
+// ACÁ MOVEMOS EL ZOOM A LA IZQUIERDA PARA QUE NO CHOQUE CON LAS TARJETAS
+map.addControl(new maplibregl.NavigationControl(), 'top-left');
 
 document.getElementById('map-style-select').addEventListener('change', (e) => {
   const estilo = CONFIG.estilosMapa[e.target.value];
