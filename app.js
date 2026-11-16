@@ -69,7 +69,8 @@ map = new maplibregl.Map({
   container: 'mapa',
   style: CONFIG.estilosMapa.satellite,
   center: CONFIG.municipio.center,
-  zoom: CONFIG.municipio.zoom
+  zoom: CONFIG.municipio.zoom,
+  maxZoom: 18 
 });
 
 // ACÁ MOVEMOS EL ZOOM A LA IZQUIERDA PARA QUE NO CHOQUE CON LAS TARJETAS
