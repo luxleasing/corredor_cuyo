@@ -2,74 +2,89 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Corredor Cuyo · Tramos</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
   <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="h-screen flex flex-col overflow-hidden bg-slate-50 text-slate-800">
 
   <!-- HEADER -->
-  <header id="app-header">
-    <div class="logo-container">
-      <img src="logo_lux_byn.png" alt="LuxLeasing" style="height: 28px; width: auto;" onerror="this.style.display='none'">
-      <span class="logo-text">LUXLEASING</span>
+  <header class="w-full z-30 relative shrink-0 bg-slate-900 text-white shadow-md h-[54px] flex items-center justify-between px-4">
+    <div class="flex items-center gap-3 shrink-0">
+      <!-- Logo PNG -->
+      <img src="logo_lux_byn.png" alt="LuxLeasing" class="h-7 w-auto" onerror="this.style.display='none'">
+      <span class="font-bold tracking-widest text-sm text-white">LUXLEASING</span>
+      <div class="h-6 border-l border-white/20"></div>
+      <h1 class="text-[13px] font-medium opacity-90 hidden sm:block">Corredor Cuyo · RN7</h1>
     </div>
-    <div class="header-title">Corredor Cuyo · RN7</div>
-    <a href="https://luxleasing.com" target="_blank" class="header-link">luxleasing.com</a>
+    <div class="flex items-center gap-4 text-xs">
+      <a href="https://luxleasing.com" target="_blank" class="text-sky-400 hover:text-sky-300 transition font-semibold">luxleasing.com</a>
+    </div>
   </header>
 
-  <!-- CONTROLES DE CAPAS (Botones) -->
-  <div id="layer-controls">
-    <button id="btn-este" class="active" onclick="toggleLayer('este')">
-      <span class="dot led"></span> Tramo Este
-    </button>
-    <button id="btn-oeste" class="active" onclick="toggleLayer('oeste')">
-      <span class="dot sodio"></span> Tramo Oeste
-    </button>
-  </div>
-
-  <!-- KPIs -->
-  <div id="kpi-container">
-    <div class="kpi-card">
-      <div class="kpi-header">
-        <span class="kpi-title">Tramo Este</span>
-        <span class="kpi-sub">Límite SL-Mza → Palmira</span>
-      </div>
-      <div class="kpi-total">
-        <strong id="total-este">—</strong> <span>luminarias</span>
-      </div>
-      <div class="kpi-details">
-        <div class="kpi-row"><span class="dot led"></span> LED <strong id="led-este">—</strong></div>
-        <div class="kpi-row"><span class="dot sodio"></span> Sodio <strong id="sodio-este">—</strong></div>
-        <div class="kpi-row"><span class="dot falta"></span> Falta <strong id="falta-este">—</strong></div>
-      </div>
+  <!-- CONTROLES Y KPIs -->
+  <div class="absolute top-[70px] left-0 w-full z-20 px-4 flex flex-col sm:flex-row justify-between items-start pointer-events-none gap-4">
+    
+    <!-- Botones de Capa -->
+    <div class="flex gap-2 pointer-events-auto bg-white p-1.5 rounded-lg shadow-md border border-slate-200">
+      <button id="btn-este" class="layer-btn active" onclick="toggleLayer('este')">
+        <span class="dot led"></span> Tramo Este
+      </button>
+      <button id="btn-oeste" class="layer-btn active" onclick="toggleLayer('oeste')">
+        <span class="dot sodio"></span> Tramo Oeste
+      </button>
     </div>
 
-    <div class="kpi-card">
-      <div class="kpi-header">
-        <span class="kpi-title">Tramo Oeste</span>
-        <span class="kpi-sub">Palmira → Las Cuevas</span>
+    <!-- Tarjetas KPI -->
+    <div class="flex gap-3 pointer-events-auto w-full sm:w-auto overflow-x-auto">
+      <!-- KPI Este -->
+      <div class="bg-white rounded-lg shadow-md border border-slate-200 p-3 w-[190px] shrink-0">
+        <div class="text-xs font-bold text-slate-800 border-b border-slate-100 pb-1 mb-2">
+          Tramo Este <span class="block text-[9px] font-normal text-slate-500">SL-Mza a Palmira</span>
+        </div>
+        <div class="flex items-baseline gap-1 mb-2">
+          <strong id="total-este" class="text-2xl font-black text-slate-900">—</strong>
+          <span class="text-[9px] uppercase font-bold text-slate-400">total</span>
+        </div>
+        <div class="space-y-1 text-xs font-medium">
+          <div class="flex justify-between items-center"><span class="flex items-center"><span class="dot led"></span>LED</span> <span id="led-este">—</span></div>
+          <div class="flex justify-between items-center"><span class="flex items-center"><span class="dot sodio"></span>Sodio</span> <span id="sodio-este">—</span></div>
+          <div class="flex justify-between items-center"><span class="flex items-center"><span class="dot falta"></span>Falta</span> <span id="falta-este">—</span></div>
+        </div>
       </div>
-      <div class="kpi-total">
-        <strong id="total-oeste">—</strong> <span>luminarias</span>
-      </div>
-      <div class="kpi-details">
-        <div class="kpi-row"><span class="dot led"></span> LED <strong id="led-oeste">—</strong></div>
-        <div class="kpi-row"><span class="dot sodio"></span> Sodio <strong id="sodio-oeste">—</strong></div>
-        <div class="kpi-row"><span class="dot falta"></span> Falta <strong id="falta-oeste">—</strong></div>
+
+      <!-- KPI Oeste -->
+      <div class="bg-white rounded-lg shadow-md border border-slate-200 p-3 w-[190px] shrink-0">
+        <div class="text-xs font-bold text-slate-800 border-b border-slate-100 pb-1 mb-2">
+          Tramo Oeste <span class="block text-[9px] font-normal text-slate-500">Palmira a Las Cuevas</span>
+        </div>
+        <div class="flex items-baseline gap-1 mb-2">
+          <strong id="total-oeste" class="text-2xl font-black text-slate-900">—</strong>
+          <span class="text-[9px] uppercase font-bold text-slate-400">total</span>
+        </div>
+        <div class="space-y-1 text-xs font-medium">
+          <div class="flex justify-between items-center"><span class="flex items-center"><span class="dot led"></span>LED</span> <span id="led-oeste">—</span></div>
+          <div class="flex justify-between items-center"><span class="flex items-center"><span class="dot sodio"></span>Sodio</span> <span id="sodio-oeste">—</span></div>
+          <div class="flex justify-between items-center"><span class="flex items-center"><span class="dot falta"></span>Falta</span> <span id="falta-oeste">—</span></div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- MAPA -->
-  <div id="mapa"></div>
+  <div id="mapa" class="flex-1 w-full relative z-10"></div>
 
-  <!-- LEYENDA FLOTANTE -->
-  <div id="leyenda">
-    <div class="leyenda-item"><span class="dot led"></span> LED</div>
-    <div class="leyenda-item"><span class="dot sodio"></span> Sodio</div>
-    <div class="leyenda-item"><span class="dot falta"></span> Falta</div>
+  <!-- LEYENDA -->
+  <div class="absolute bottom-4 left-4 z-20 bg-white/90 backdrop-blur rounded-lg shadow-md border border-slate-200 p-3 text-xs font-semibold">
+    <div class="flex items-center gap-2 mb-1"><span class="dot led"></span> LED</div>
+    <div class="flex items-center gap-2 mb-1"><span class="dot sodio"></span> Sodio</div>
+    <div class="flex items-center gap-2"><span class="dot falta"></span> Falta</div>
   </div>
 
   <script src="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.js"></script>
