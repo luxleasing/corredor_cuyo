@@ -13,7 +13,7 @@ body { font-family: 'Archivo', sans-serif; margin: 0; }
 .layer-btn:hover { background: #f1f5f9; }
 .layer-btn.active { background: #f0f9ff; color: #0ea5e9; border-color: #bae6fd; }
 
-/* Puntos */
+/* Puntos de la leyenda */
 .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
 .led { background: #38bdf8; }
 .sodio { background: #fde047; }
