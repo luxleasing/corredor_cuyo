@@ -24,19 +24,23 @@ window.LUX_CONFIG = {
   estilosMapa: {
     light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
     dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    // Estilo "Google Maps" usando tiles de ESRI o similares
+    
+    // GOOGLE SATELLITE (Límite de zoom: 20)
     google: {
       version: 8,
       sources: {
         'google-tiles': {
           type: 'raster',
-          tiles: ['https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'],
+          tiles: ['https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}'], // lyrs=s es satelital
           tileSize: 256,
-          attribution: '© Google'
+          attribution: '© Google',
+          maxzoom: 20
         }
       },
       layers: [{ id: 'google-layer', type: 'raster', source: 'google-tiles' }]
     },
+
+    // ESRI WORLD IMAGERY (Límite de zoom: 19)
     satellite: {
       version: 8,
       sources: {
@@ -44,7 +48,8 @@ window.LUX_CONFIG = {
           type: 'raster',
           tiles: ['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'],
           tileSize: 256,
-          attribution: 'Tiles © Esri'
+          attribution: 'Tiles © Esri',
+          maxzoom: 19
         }
       },
       layers: [{ id: 'satellite-layer', type: 'raster', source: 'satellite-tiles' }]
