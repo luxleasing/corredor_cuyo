@@ -28,10 +28,8 @@ function toggleLayer(tramo) {
 function agregarCapas() {
   if (!map.getSource('puntos')) return;
 
-  // ACHICAR AL HACER ZOOM: 
-  // De lejos (zoom 8) miden 4px, de cerca (zoom 15) miden 1.5px.
-  // Esto hace que no se amontonen cuando estás cerca.
-  const radioExpr = ['interpolate', ['linear'], ['zoom'], 8, 4, 12, 3, 15, 1.5];
+  // PUNTOS MÁS GRANDES: De lejos miden 7px, de cerca bajan a 3px.
+  const radioExpr = ['interpolate', ['linear'], ['zoom'], 8, 7, 12, 5, 15, 3];
   
   const colorExpr = [
     'case',
