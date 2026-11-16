@@ -28,7 +28,7 @@ function toggleLayer(tramo) {
 function agregarCapas() {
   if (!map.getSource('puntos')) return;
 
-  // PUNTOS MÁS GRANDES (7px lejos, 3px cerca)
+  // PUNTOS GRANDES
   const radioExpr = ['interpolate', ['linear'], ['zoom'], 8, 7, 12, 5, 15, 3];
   
   const colorExpr = [
@@ -65,20 +65,33 @@ function agregarCapas() {
   }
 }
 
+// Iniciamos con Google (que tiene maxZoom 20)
 map = new maplibregl.Map({
   container: 'mapa',
-  style: CONFIG.estilosMapa.satellite,
+  style: CONFIG.estilosMapa.google, 
   center: CONFIG.municipio.center,
   zoom: CONFIG.municipio.zoom,
-  maxZoom: 18 
+  maxZoom: 20 
 });
 
-// ACÁ MOVEMOS EL ZOOM A LA IZQUIERDA PARA QUE NO CHOQUE CON LAS TARJETAS
 map.addControl(new maplibregl.NavigationControl(), 'top-left');
 
+// Escuchar cambio de mapa base
 document.getElementById('map-style-select').addEventListener('change', (e) => {
-  const estilo = CONFIG.estilosMapa[e.target.value];
+  const tipoMapa = e.target.value;
+  const estilo = CONFIG.estilosMapa[tipoMapa];
+  
   map.setStyle(estilo);
+
+  // Ajustar límite de zoom según el proveedor
+  if (tipoMapa === 'google') {
+    map.setMaxZoom(20);
+  } else if (tipoMapa === 'satellite') {
+    map.setMaxZoom(19);
+  } else {
+    map.setMaxZoom(22);
+  }
+
   map.once('styledata', () => setTimeout(() => agregarCapas(), 100));
 });
 
