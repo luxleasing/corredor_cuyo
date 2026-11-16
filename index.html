@@ -2,100 +2,68 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Corredor Cuyo · Tramos Este y Oeste</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="h-screen flex flex-col overflow-hidden">
+<body>
 
-<header id="main-header" class="w-full z-30 relative shrink-0">
-  <div class="flex items-center justify-between px-4 h-[54px] gap-4">
-    <div class="flex items-center gap-3 shrink-0">
-      <img src="logo_lux_byn.png" alt="Lux" class="h-8 w-auto opacity-90" onerror="this.style.display='none'">
-      <div class="h-6 border-l border-white/30"></div>
-      <img src="logo_riv_2.png" alt="Rivadavia" class="h-6 w-auto opacity-90" onerror="this.style.display='none'">
-    </div>
-    <h1 class="hidden md:block text-[13px] font-semibold text-white tracking-wide">
-      Corredor Cuyo · RN7 <span class="opacity-70 mx-1">·</span> <span class="opacity-90 font-normal">Tramos Este y Oeste</span>
-    </h1>
-    <div class="flex items-center gap-2">
-      <select id="map-style-select" class="header-select">
-        <option value="light">Claro</option>
-        <option value="dark">Oscuro</option>
-        <option value="satellite" selected>Satelital</option>
-      </select>
-      <button id="theme-toggle" class="header-btn"><svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="7"></circle><path d="M12 5a7 7 0 0 0 0 14V5z" fill="currentColor"/></svg></button>
-    </div>
+<header id="main-header">
+  <div class="header-content">
+    <h1>Corredor Cuyo · RN7</h1>
+    <select id="map-style-select">
+      <option value="satellite" selected>Satelital</option>
+      <option value="light">Claro</option>
+      <option value="dark">Oscuro</option>
+    </select>
   </div>
 </header>
 
-<div class="kpi-strip shrink-0" id="kpi-strip">
-  <button id="kpi-toggle" class="kpi-toggle" aria-expanded="false" type="button">
-    <span id="kpi-summary">Cargando…</span>
-    <svg class="kpi-toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-  </button>
-  <div class="kpi-cards">
-    <div class="kpi-card kpi-card-before">
-      <div class="kpi-head"><span class="kpi-dot" style="background:#e2f916"></span><span class="kpi-year">Tramo Este</span></div>
-      <div class="kpi-total"><span id="kpi-total-este" class="kpi-total-num">—</span><span class="kpi-total-label">luminarias</span></div>
-      <div class="kpi-bar"><div id="bar-led-este" class="kpi-bar-seg" style="background:#22d3ee"></div><div id="bar-sodio-este" class="kpi-bar-seg" style="background:#e2f916"></div><div id="bar-falta-este" class="kpi-bar-seg" style="background:#f43f5e"></div></div>
-      <div class="kpi-breakdown">
-        <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#22d3ee"></span>LED</span><span id="kpi-led-este" class="kpi-break-value kpi-val-led">—</span></div>
-        <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#e2f916"></span>Sodio</span><span id="kpi-sodio-este" class="kpi-break-value kpi-val-sodio">—</span></div>
-        <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#f43f5e"></span>Falta</span><span id="kpi-falta-este" class="kpi-break-value kpi-val-otros">—</span></div>
-      </div>
-      <div class="kpi-meta">
-        <div class="kpi-meta-row"><span class="kpi-meta-label">Potencia</span><span id="potencia-este" class="kpi-meta-value">—</span></div>
-      </div>
+<div id="diagnostico"></div>
+
+<div class="kpi-strip" id="kpi-strip">
+  <div class="kpi-card kpi-card-before">
+    <div class="kpi-head"><span class="kpi-dot" style="background:#e2f916"></span><span class="kpi-year">Tramo Este</span></div>
+    <div class="kpi-total"><span id="kpi-total-este" class="kpi-total-num">—</span><span class="kpi-total-label">luminarias</span></div>
+    <div class="kpi-breakdown">
+      <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#22d3ee"></span>LED</span><span id="kpi-led-este" class="kpi-break-value kpi-val-led">—</span></div>
+      <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#e2f916"></span>Sodio</span><span id="kpi-sodio-este" class="kpi-break-value kpi-val-sodio">—</span></div>
+      <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#f43f5e"></span>Falta</span><span id="kpi-falta-este" class="kpi-break-value kpi-val-otros">—</span></div>
     </div>
-    <div class="kpi-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-    <div class="kpi-card kpi-card-after">
-      <div class="kpi-head"><span class="kpi-dot" style="background:#22d3ee"></span><span class="kpi-year">Tramo Oeste</span></div>
-      <div class="kpi-total"><span id="kpi-total-oeste" class="kpi-total-num">—</span><span class="kpi-total-label">luminarias</span></div>
-      <div class="kpi-bar"><div id="bar-led-oeste" class="kpi-bar-seg" style="background:#22d3ee"></div><div id="bar-sodio-oeste" class="kpi-bar-seg" style="background:#e2f916"></div><div id="bar-falta-oeste" class="kpi-bar-seg" style="background:#f43f5e"></div></div>
-      <div class="kpi-breakdown">
-        <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#22d3ee"></span>LED</span><span id="kpi-led-oeste" class="kpi-break-value kpi-val-led">—</span></div>
-        <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#e2f916"></span>Sodio</span><span id="kpi-sodio-oeste" class="kpi-break-value kpi-val-sodio">—</span></div>
-        <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#f43f5e"></span>Falta</span><span id="kpi-falta-oeste" class="kpi-break-value kpi-val-otros">—</span></div>
-      </div>
-      <div class="kpi-meta">
-        <div class="kpi-meta-row"><span class="kpi-meta-label">Potencia</span><span id="potencia-oeste" class="kpi-meta-value">—</span></div>
-      </div>
+  </div>
+  <div class="kpi-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+  <div class="kpi-card kpi-card-after">
+    <div class="kpi-head"><span class="kpi-dot" style="background:#22d3ee"></span><span class="kpi-year">Tramo Oeste</span></div>
+    <div class="kpi-total"><span id="kpi-total-oeste" class="kpi-total-num">—</span><span class="kpi-total-label">luminarias</span></div>
+    <div class="kpi-breakdown">
+      <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#22d3ee"></span>LED</span><span id="kpi-led-oeste" class="kpi-break-value kpi-val-led">—</span></div>
+      <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#e2f916"></span>Sodio</span><span id="kpi-sodio-oeste" class="kpi-break-value kpi-val-sodio">—</span></div>
+      <div class="kpi-break-row"><span class="kpi-break-label"><span class="dot sm" style="background:#f43f5e"></span>Falta</span><span id="kpi-falta-oeste" class="kpi-break-value kpi-val-otros">—</span></div>
     </div>
   </div>
 </div>
 
-<div id="comparison-container" class="flex-1 relative min-h-0">
+<div id="comparison-container">
   <div id="map-oeste" class="map-pane"></div>
-  <div id="map-este" class="map-pane map-pane-clipped"></div>
-  <div id="swipe-divider" role="slider" aria-label="Comparar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" tabindex="0">
+  <div id="map-este" class="map-pane"></div>
+  
+  <div id="swipe-divider">
     <div class="swipe-line"></div>
-    <button class="swipe-handle" aria-label="Arrastrar" type="button">
-      <svg class="icon-v" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l-4 6 4 6M15 6l4 6-4 6"/></svg>
-      <svg class="icon-h" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6-4 6 4M6 15l6 4 6-4"/></svg>
-    </button>
-  </div>
-  <div class="year-badge year-badge-top"><span class="year-dot" style="background:#e2f916"></span><span>Tramo Este</span></div>
-  <div class="year-badge year-badge-bottom"><span class="year-dot" style="background:#22d3ee"></span><span>Tramo Oeste</span></div>
-  <div id="swipe-hint" class="swipe-hint">
-    <svg class="icon-v" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M9 8l-4 4 4 4M15 8l4 4-4 4" opacity="0.7"/></svg>
-    <svg class="icon-h" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M8 9l4-4 4 4M8 15l4 4 4-4" opacity="0.7"/></svg>
-    <span>Arrastrá para comparar</span>
-  </div>
-  <div id="legend-floating" class="absolute bottom-4 left-4 z-30">
-    <div class="legend-box">
-      <div class="legend-title">Luminaria</div>
-      <div class="legend-item"><span class="dot" style="background:#22d3ee"></span> LED</div>
-      <div class="legend-item"><span class="dot" style="background:#e2f916"></span> Sodio</div>
-      <div class="legend-item"><span class="dot" style="background:#f43f5e"></span> Falta</div>
-      <div class="legend-item"><span class="dot" style="background:#94a3b8"></span> Sin sector</div>
+    <div class="swipe-handle">
+      <svg class="icon-v" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l-4 6 4 6M15 6l4 6-4 6"/></svg>
+      <svg class="icon-h" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6-4 6 4M6 15l6 4 6-4"/></svg>
     </div>
   </div>
-  <div id="diagnostico" class="absolute top-3 left-1/2 -translate-x-1/2 z-50 hidden rounded-md text-white text-[11px] px-3 py-1.5 shadow-lg"></div>
+  
+  <div class="year-badge year-badge-top"><span class="year-dot" style="background:#e2f916"></span>Tramo Este</div>
+  <div class="year-badge year-badge-bottom"><span class="year-dot" style="background:#22d3ee"></span>Tramo Oeste</div>
+
+  <div class="legend-box">
+    <div class="legend-item"><span class="dot" style="background:#22d3ee"></span> LED</div>
+    <div class="legend-item"><span class="dot" style="background:#e2f916"></span> Sodio</div>
+    <div class="legend-item"><span class="dot" style="background:#f43f5e"></span> Falta</div>
+  </div>
 </div>
 
 <script src="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.js"></script>
