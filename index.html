@@ -4,52 +4,77 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Corredor Cuyo · Tramos</title>
-  <!-- CSS de MapLibre -->
   <link href="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.css" rel="stylesheet">
-  <!-- Nuestro CSS -->
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- Panel Superior de KPIs -->
-  <div id="panel-kpis">
-    
-    <!-- Tramo Este -->
+  <!-- HEADER -->
+  <header id="app-header">
+    <div class="logo-container">
+      <!-- Reemplazá este SVG por tu <img src="logo.png"> si lo tenés -->
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+      <span class="logo-text">LUXLEASING</span>
+    </div>
+    <div class="header-title">Corredor Cuyo · RN7</div>
+    <a href="https://luxleasing.com" target="_blank" class="header-link">luxleasing.com</a>
+  </header>
+
+  <!-- CONTROLES DE CAPAS (Botones) -->
+  <div id="layer-controls">
+    <button id="btn-este" class="active" onclick="toggleLayer('este')">
+      <span class="dot led"></span> Tramo Este
+    </button>
+    <button id="btn-oeste" class="active" onclick="toggleLayer('oeste')">
+      <span class="dot sodio"></span> Tramo Oeste
+    </button>
+  </div>
+
+  <!-- KPIs -->
+  <div id="kpi-container">
     <div class="kpi-card">
-      <h2>Tramo Este <span class="subtitulo">(SL-Mza a Palmira)</span></h2>
-      <div class="kpi-total">
-        <strong id="total-este">—</strong> <span>total</span>
+      <div class="kpi-header">
+        <span class="kpi-title">Tramo Este</span>
+        <span class="kpi-sub">Límite SL-Mza → Palmira</span>
       </div>
-      <div class="kpi-detalle">
-        <div class="item led"><span class="color-dot"></span> LED: <strong id="led-este">—</strong></div>
-        <div class="item sodio"><span class="color-dot"></span> Sodio: <strong id="sodio-este">—</strong></div>
+      <div class="kpi-total">
+        <strong id="total-este">—</strong> <span>luminarias totales</span>
+      </div>
+      <div class="kpi-details">
+        <div class="kpi-row"><span class="dot led"></span> LED <strong id="led-este">—</strong></div>
+        <div class="kpi-row"><span class="dot sodio"></span> Sodio <strong id="sodio-este">—</strong></div>
+        <div class="kpi-row"><span class="dot falta"></span> Falta <strong id="falta-este">—</strong></div>
       </div>
     </div>
 
-    <!-- Tramo Oeste -->
     <div class="kpi-card">
-      <h2>Tramo Oeste <span class="subtitulo">(Palmira a Las Cuevas)</span></h2>
-      <div class="kpi-total">
-        <strong id="total-oeste">—</strong> <span>total</span>
+      <div class="kpi-header">
+        <span class="kpi-title">Tramo Oeste</span>
+        <span class="kpi-sub">Palmira → Las Cuevas</span>
       </div>
-      <div class="kpi-detalle">
-        <div class="item led"><span class="color-dot"></span> LED: <strong id="led-oeste">—</strong></div>
-        <div class="item sodio"><span class="color-dot"></span> Sodio: <strong id="sodio-oeste">—</strong></div>
+      <div class="kpi-total">
+        <strong id="total-oeste">—</strong> <span>luminarias totales</span>
+      </div>
+      <div class="kpi-details">
+        <div class="kpi-row"><span class="dot led"></span> LED <strong id="led-oeste">—</strong></div>
+        <div class="kpi-row"><span class="dot sodio"></span> Sodio <strong id="sodio-oeste">—</strong></div>
+        <div class="kpi-row"><span class="dot falta"></span> Falta <strong id="falta-oeste">—</strong></div>
       </div>
     </div>
-
   </div>
 
-  <!-- Panel de Control (Checkboxes para prender/apagar capas) -->
-  <div id="panel-controles">
-    <label><input type="checkbox" id="chk-este" checked> Ver Tramo Este</label>
-    <label><input type="checkbox" id="chk-oeste" checked> Ver Tramo Oeste</label>
-  </div>
-
-  <!-- El Mapa -->
+  <!-- MAPA -->
   <div id="mapa"></div>
 
-  <!-- Scripts -->
+  <!-- LEYENDA FLOTANTE -->
+  <div id="leyenda">
+    <div class="leyenda-item"><span class="dot led"></span> LED</div>
+    <div class="leyenda-item"><span class="dot sodio"></span> Sodio</div>
+    <div class="leyenda-item"><span class="dot falta"></span> Falta</div>
+  </div>
+
   <script src="https://unpkg.com/maplibre-gl@4.7.0/dist/maplibre-gl.js"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
