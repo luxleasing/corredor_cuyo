@@ -1,63 +1,168 @@
-/* Configuración básica para que ocupe toda la pantalla */
+:root {
+  /* Paleta Luxleasing (Azules) */
+  --brand-blue: #0f172a;      
+  --brand-blue-light: #1e293b;
+  --brand-accent: #0ea5e9;    
+  
+  /* Colores de simbología desaturados */
+  --color-led: #38bdf8;       /* Celeste suave */
+  --color-sodio: #fde047;     /* Amarillo suave */
+  --color-falta: #fda4af;     /* Rosa suave */
+
+  --bg-app: #f8fafc;
+  --bg-card: #ffffff;
+  --border-card: #e2e8f0;
+  --text-main: #334155;
+  --text-muted: #64748b;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   font-family: system-ui, -apple-system, sans-serif;
+  background: var(--bg-app);
+  color: var(--text-main);
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #f1f5f9;
 }
 
-/* Panel Superior */
-#panel-kpis {
+/* HEADER */
+#app-header {
+  background: var(--brand-blue);
+  color: #fff;
+  padding: 0 20px;
+  height: 56px;
   display: flex;
-  gap: 16px;
-  padding: 12px;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 20;
+}
+.logo-container { display: flex; align-items: center; gap: 8px; color: var(--brand-accent); }
+.logo-text { font-weight: 800; letter-spacing: 1px; font-size: 16px; color: #fff; }
+.header-title { font-size: 13px; font-weight: 500; opacity: 0.8; }
+.header-link { color: var(--brand-accent); text-decoration: none; font-size: 12px; font-weight: 600; }
+.header-link:hover { text-decoration: underline; }
+
+/* CONTROLES (Botones) */
+#layer-controls {
+  position: absolute;
+  top: 70px;
+  left: 20px;
   z-index: 10;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  display: flex;
+  gap: 8px;
+}
+#layer-controls button {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: all 0.2s;
+}
+#layer-controls button.active {
+  background: #fff;
+  color: var(--brand-blue);
+  border-color: var(--brand-accent);
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+}
+#layer-controls button:hover { background: #f1f5f9; }
+
+/* KPIs */
+#kpi-container {
+  position: absolute;
+  top: 70px;
+  right: 20px;
+  z-index: 10;
+  display: flex;
+  gap: 12px;
 }
 .kpi-card {
-  flex: 1;
-  padding: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
-  background: #f8fafc;
+  padding: 14px;
+  width: 200px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
-.kpi-card h2 {
-  font-size: 14px;
-  color: #0f172a;
-  margin-bottom: 8px;
-}
-.subtitulo { font-size: 11px; color: #64748b; font-weight: normal; }
-.kpi-total { font-size: 24px; color: #0f172a; margin-bottom: 8px; }
-.kpi-total span { font-size: 12px; color: #64748b; font-weight: normal; }
-.kpi-detalle { display: flex; gap: 16px; font-size: 13px; }
-.item { display: flex; align-items: center; gap: 6px; }
-.color-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-.item.led .color-dot { background: #22d3ee; }
-.item.sodio .color-dot { background: #e2f916; }
+.kpi-header { display: flex; flex-direction: column; margin-bottom: 10px; border-bottom: 1px solid var(--border-card); padding-bottom: 8px; }
+.kpi-title { font-size: 13px; font-weight: 700; color: var(--brand-blue); }
+.kpi-sub { font-size: 10px; color: var(--text-muted); }
+.kpi-total { display: flex; align-items: baseline; gap: 6px; margin-bottom: 12px; }
+.kpi-total strong { font-size: 24px; color: var(--text-main); }
+.kpi-total span { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+.kpi-details { display: flex; flex-direction: column; gap: 6px; }
+.kpi-row { display: flex; align-items: center; font-size: 12px; }
+.kpi-row strong { margin-left: auto; font-weight: 700; }
 
-/* Panel de Controles (Checkboxes flotantes) */
-#panel-controles {
-  position: absolute;
-  top: 120px;
-  left: 16px;
-  z-index: 10;
-  background: rgba(255,255,255,0.95);
-  padding: 10px 14px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  font-size: 13px;
-}
-#panel-controles label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+/* Puntos de colores */
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 8px; flex-shrink: 0; }
+.led { background: var(--color-led); }
+.sodio { background: var(--color-sodio); }
+.falta { background: var(--color-falta); }
 
-/* Mapa (ocupa todo el resto) */
+/* MAPA */
 #mapa {
   flex: 1;
   width: 100%;
+  background: #e2e8f0;
+}
+
+/* LEYENDA */
+#leyenda {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.leyenda-item { font-size: 12px; font-weight: 600; display: flex; align-items: center; color: var(--text-main); }
+
+/* RESPONSIVE (Celulares) */
+@media (max-width: 768px) {
+  #app-header { padding: 0 12px; }
+  .header-title { display: none; } /* Ocultamos el titulo en mobile para que quepa el logo */
+  
+  /* Los controles y los KPIs se apilan */
+  #layer-controls {
+    top: 65px;
+    left: 10px;
+    right: 10px;
+    justify-content: center;
+  }
+  
+  #kpi-container {
+    top: 115px;
+    left: 10px;
+    right: 10px;
+    flex-direction: row; /* uno al lado del otro */
+  }
+  .kpi-card {
+    flex: 1;
+    width: auto;
+    padding: 10px;
+  }
+  .kpi-total strong { font-size: 20px; }
+  .kpi-total span { display: none; } /* Ocultamos "luminarias totales" para ahorrar espacio */
+  
+  #leyenda {
+    bottom: 10px;
+    left: 10px;
+    padding: 8px;
+  }
 }
