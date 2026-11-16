@@ -2,7 +2,6 @@ const CONFIG = window.LUX_CONFIG;
 let map;
 let capasVisibles = { este: true, oeste: true };
 
-// Función tolerante a mayúsculas
 function getProp(props, campo) {
   if (!props) return null;
   if (props[campo] !== undefined) return props[campo];
@@ -12,7 +11,6 @@ function getProp(props, campo) {
   return null;
 }
 
-// Función para los botones
 function toggleLayer(tramo) {
   capasVisibles[tramo] = !capasVisibles[tramo];
   const capaId = `capa-${tramo}`;
@@ -27,15 +25,65 @@ function toggleLayer(tramo) {
   else btn.classList.remove('active');
 }
 
+function agregarCapas() {
+  if (!map.getSource('puntos')) return; // Asegurarse de que los datos estén
+
+  // Puntos más chicos (Rivadavia style)
+  const radioExpr = ['interpolate', ['linear'], ['zoom'], 8, 1.5, 12, 3, 16, 6];
+  const colorExpr = [
+    'case',
+    ['in', 'LED', ['upcase', ['to-string', ['get', CONFIG.campos.tecnologia]]]], '#38bdf8',
+    ['in', 'SODIO', ['upcase', ['to-string', ['get', CONFIG.campos.tecnologia]]]], '#fde047',
+    '#fda4af'
+  ];
+
+  if (!map.getLayer('capa-este')) {
+    map.addLayer({
+      id: 'capa-este', type: 'circle', source: 'puntos',
+      filter: ['==', ['get', CONFIG.campos.sector], CONFIG.tramos.este],
+      paint: {
+        'circle-radius': radioExpr,
+        'circle-color': colorExpr,
+        'circle-stroke-width': 0.5,
+        'circle-stroke-color': '#ffffff'
+      }
+    });
+  }
+
+  if (!map.getLayer('capa-oeste')) {
+    map.addLayer({
+      id: 'capa-oeste', type: 'circle', source: 'puntos',
+      filter: ['==', ['get', CONFIG.campos.sector], CONFIG.tramos.oeste],
+      paint: {
+        'circle-radius': radioExpr,
+        'circle-color': colorExpr,
+        'circle-stroke-width': 0.5,
+        'circle-stroke-color': '#ffffff'
+      }
+    });
+  }
+}
+
 // Iniciar mapa
 map = new maplibregl.Map({
   container: 'mapa',
   style: CONFIG.estilosMapa.satellite,
-  center: [-68.55, -32.90],
-  zoom: 9
+  center: CONFIG.municipio.center,
+  zoom: CONFIG.municipio.zoom
 });
 
 map.addControl(new maplibregl.NavigationControl(), 'top-right');
+
+// Escuchar cambio de mapa base
+document.getElementById('map-style-select').addEventListener('change', (e) => {
+  const estilo = CONFIG.estilosMapa[e.target.value];
+  map.setStyle(estilo);
+  
+  // Reinyectar puntos cuando cambia el mapa base
+  map.once('styledata', () => {
+    setTimeout(() => agregarCapas(), 100);
+  });
+});
 
 map.on('load', async () => {
   try {
@@ -48,7 +96,6 @@ map.on('load', async () => {
       oeste: { total: 0, led: 0, sodio: 0, falta: 0 } 
     };
 
-    // Contar datos
     geojson.features.forEach(f => {
       const p = f.properties;
       const sector = getProp(p, CONFIG.campos.sector);
@@ -77,44 +124,11 @@ map.on('load', async () => {
     document.getElementById('sodio-oeste').innerText = stats.oeste.sodio;
     document.getElementById('falta-oeste').innerText = stats.oeste.falta;
 
-    // Cargar al mapa
+    // Agregar fuente
     map.addSource('puntos', { type: 'geojson', data: geojson });
-
-    // Colores desaturados
-    const colorExpr = [
-      'case',
-      ['in', 'LED', ['upcase', ['to-string', ['get', CONFIG.campos.tecnologia]]]], '#38bdf8',
-      ['in', 'SODIO', ['upcase', ['to-string', ['get', CONFIG.campos.tecnologia]]]], '#fde047',
-      '#fda4af'
-    ];
-
-    // Capa Este
-    map.addLayer({
-      id: 'capa-este',
-      type: 'circle',
-      source: 'puntos',
-      filter: ['==', ['get', CONFIG.campos.sector], CONFIG.tramos.este],
-      paint: {
-        'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 4, 14, 8],
-        'circle-color': colorExpr,
-        'circle-stroke-width': 1,
-        'circle-stroke-color': '#ffffff'
-      }
-    });
-
-    // Capa Oeste
-    map.addLayer({
-      id: 'capa-oeste',
-      type: 'circle',
-      source: 'puntos',
-      filter: ['==', ['get', CONFIG.campos.sector], CONFIG.tramos.oeste],
-      paint: {
-        'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 4, 14, 8],
-        'circle-color': colorExpr,
-        'circle-stroke-width': 1,
-        'circle-stroke-color': '#ffffff'
-      }
-    });
+    
+    // Agregar capas
+    agregarCapas();
 
   } catch (err) {
     console.error(err);
