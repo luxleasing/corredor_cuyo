@@ -67,21 +67,20 @@ map = new maplibregl.Map({
 
 map.addControl(new maplibregl.NavigationControl(), 'top-left');
 
+// Escuchar cambio de mapa base
 document.getElementById('map-style-select').addEventListener('change', (e) => {
   const tipoMapa = e.target.value;
   
-  map.setMaxZoom(tipoMapa === 'google' ? 20 : (tipoMapa === 'satellite' ? 19 : 22));
+  map.setMaxZoom(tipoMapa === 'google' ? 20 : 22);
   
   map.setStyle(CONFIG.estilosMapa[tipoMapa]);
 
-  // Esperar a que el nuevo mapa esté listo y reinyectar los puntos
+  // LA CLAVE: cuando el nuevo estilo esté listo, volver a dibujar los puntos
   map.once('styledata', () => {
-    setTimeout(() => {
-      if (datosGeojson) {
-        map.addSource('puntos', { type: 'geojson', data: datosGeojson });
-        dibujarPuntos();
-      }
-    }, 50); 
+    if (datosGeojson) {
+      map.addSource('puntos', { type: 'geojson', data: datosGeojson });
+      dibujarPuntos();
+    }
   });
 });
 
