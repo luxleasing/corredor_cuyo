@@ -26,10 +26,13 @@ function toggleLayer(tramo) {
 }
 
 function agregarCapas() {
-  if (!map.getSource('puntos')) return; // Asegurarse de que los datos estén
+  if (!map.getSource('puntos')) return;
 
-  // Puntos más chicos (Rivadavia style)
-  const radioExpr = ['interpolate', ['linear'], ['zoom'], 8, 1.5, 12, 3, 16, 6];
+  // ACHICAR AL HACER ZOOM: 
+  // De lejos (zoom 8) miden 4px, de cerca (zoom 15) miden 1.5px.
+  // Esto hace que no se amontonen cuando estás cerca.
+  const radioExpr = ['interpolate', ['linear'], ['zoom'], 8, 4, 12, 3, 15, 1.5];
+  
   const colorExpr = [
     'case',
     ['in', 'LED', ['upcase', ['to-string', ['get', CONFIG.campos.tecnologia]]]], '#38bdf8',
@@ -64,7 +67,6 @@ function agregarCapas() {
   }
 }
 
-// Iniciar mapa
 map = new maplibregl.Map({
   container: 'mapa',
   style: CONFIG.estilosMapa.satellite,
@@ -74,15 +76,10 @@ map = new maplibregl.Map({
 
 map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
-// Escuchar cambio de mapa base
 document.getElementById('map-style-select').addEventListener('change', (e) => {
   const estilo = CONFIG.estilosMapa[e.target.value];
   map.setStyle(estilo);
-  
-  // Reinyectar puntos cuando cambia el mapa base
-  map.once('styledata', () => {
-    setTimeout(() => agregarCapas(), 100);
-  });
+  map.once('styledata', () => setTimeout(() => agregarCapas(), 100));
 });
 
 map.on('load', async () => {
@@ -113,7 +110,6 @@ map.on('load', async () => {
       }
     });
 
-    // Actualizar HTML
     document.getElementById('total-este').innerText = stats.este.total;
     document.getElementById('led-este').innerText = stats.este.led;
     document.getElementById('sodio-este').innerText = stats.este.sodio;
@@ -124,10 +120,7 @@ map.on('load', async () => {
     document.getElementById('sodio-oeste').innerText = stats.oeste.sodio;
     document.getElementById('falta-oeste').innerText = stats.oeste.falta;
 
-    // Agregar fuente
     map.addSource('puntos', { type: 'geojson', data: geojson });
-    
-    // Agregar capas
     agregarCapas();
 
   } catch (err) {
