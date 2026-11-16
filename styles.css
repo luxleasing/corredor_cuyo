@@ -1,11 +1,10 @@
 body { font-family: 'Archivo', sans-serif; margin: 0; }
 #mapa { min-height: 50vh; }
 
-/* Botones de capa */
 .layer-btn {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 12px; border-radius: 6px;
-  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; gap: 4px;
+  padding: 5px 8px; border-radius: 4px;
+  font-size: 10px; font-weight: 700;
   color: #64748b; background: transparent;
   border: 1px solid transparent; cursor: pointer;
   transition: all 0.2s;
@@ -13,8 +12,7 @@ body { font-family: 'Archivo', sans-serif; margin: 0; }
 .layer-btn:hover { background: #f1f5f9; }
 .layer-btn.active { background: #f0f9ff; color: #0ea5e9; border-color: #bae6fd; }
 
-/* Puntos de la leyenda */
-.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+.dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
 .led { background: #38bdf8; }
 .sodio { background: #fde047; }
 .falta { background: #fda4af; }
