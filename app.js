@@ -2,6 +2,7 @@ const CONFIG = window.LUX_CONFIG;
 let map;
 let capasVisibles = { este: true, oeste: true };
 
+// Función tolerante a mayúsculas
 function getProp(props, campo) {
   if (!props) return null;
   if (props[campo] !== undefined) return props[campo];
@@ -11,6 +12,7 @@ function getProp(props, campo) {
   return null;
 }
 
+// Función para los botones
 function toggleLayer(tramo) {
   capasVisibles[tramo] = !capasVisibles[tramo];
   const capaId = `capa-${tramo}`;
@@ -21,107 +23,101 @@ function toggleLayer(tramo) {
   }
   
   const btn = document.getElementById(btnId);
-  if (capasVisibles[tramo]) {
-    btn.classList.add('active');
-  } else {
-    btn.classList.remove('active');
-  }
+  if (capasVisibles[tramo]) btn.classList.add('active');
+  else btn.classList.remove('active');
 }
 
-// Esperar a que el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
-  
-  // Iniciar mapa
-  map = new maplibregl.Map({
-    container: 'mapa',
-    style: CONFIG.estilosMapa.satellite,
-    center: [-68.55, -32.90],
-    zoom: 10
-  });
+// Iniciar mapa
+map = new maplibregl.Map({
+  container: 'mapa',
+  style: CONFIG.estilosMapa.satellite,
+  center: [-68.55, -32.90],
+  zoom: 9
+});
 
-  map.addControl(new maplibregl.NavigationControl(), 'top-right');
+map.addControl(new maplibregl.NavigationControl(), 'top-right');
 
-  map.on('load', async () => {
-    try {
-      const res = await fetch(CONFIG.fuentes.corredor);
-      if (!res.ok) throw new Error("No se pudo cargar el archivo .geojson");
-      const geojson = await res.json();
+map.on('load', async () => {
+  try {
+    const res = await fetch(CONFIG.fuentes.corredor);
+    if (!res.ok) throw new Error("No se pudo cargar el .geojson");
+    const geojson = await res.json();
 
-      let stats = { 
-        este: { total: 0, led: 0, sodio: 0, falta: 0 }, 
-        oeste: { total: 0, led: 0, sodio: 0, falta: 0 } 
-      };
+    let stats = { 
+      este: { total: 0, led: 0, sodio: 0, falta: 0 }, 
+      oeste: { total: 0, led: 0, sodio: 0, falta: 0 } 
+    };
 
-      geojson.features.forEach(f => {
-        const p = f.properties;
-        const sector = getProp(p, CONFIG.campos.sector);
-        const tech = String(getProp(p, CONFIG.campos.tecnologia) || "").toUpperCase();
+    // Contar datos
+    geojson.features.forEach(f => {
+      const p = f.properties;
+      const sector = getProp(p, CONFIG.campos.sector);
+      const tech = String(getProp(p, CONFIG.campos.tecnologia) || "").toUpperCase();
 
-        let tramo = null;
-        if (sector === CONFIG.tramos.este) tramo = 'este';
-        else if (sector === CONFIG.tramos.oeste) tramo = 'oeste';
+      let tramo = null;
+      if (sector === CONFIG.tramos.este) tramo = 'este';
+      else if (sector === CONFIG.tramos.oeste) tramo = 'oeste';
 
-        if (tramo) {
-          stats[tramo].total++;
-          if (tech.includes('LED')) stats[tramo].led++;
-          else if (tech.includes('SODIO')) stats[tramo].sodio++;
-          else stats[tramo].falta++; 
-        }
-      });
+      if (tramo) {
+        stats[tramo].total++;
+        if (tech.includes('LED')) stats[tramo].led++;
+        else if (tech.includes('SODIO')) stats[tramo].sodio++;
+        else stats[tramo].falta++; 
+      }
+    });
 
-      // Actualizar los números en HTML
-      document.getElementById('total-este').innerText = stats.este.total;
-      document.getElementById('led-este').innerText = stats.este.led;
-      document.getElementById('sodio-este').innerText = stats.este.sodio;
-      document.getElementById('falta-este').innerText = stats.este.falta;
+    // Actualizar HTML
+    document.getElementById('total-este').innerText = stats.este.total;
+    document.getElementById('led-este').innerText = stats.este.led;
+    document.getElementById('sodio-este').innerText = stats.este.sodio;
+    document.getElementById('falta-este').innerText = stats.este.falta;
 
-      document.getElementById('total-oeste').innerText = stats.oeste.total;
-      document.getElementById('led-oeste').innerText = stats.oeste.led;
-      document.getElementById('sodio-oeste').innerText = stats.oeste.sodio;
-      document.getElementById('falta-oeste').innerText = stats.oeste.falta;
+    document.getElementById('total-oeste').innerText = stats.oeste.total;
+    document.getElementById('led-oeste').innerText = stats.oeste.led;
+    document.getElementById('sodio-oeste').innerText = stats.oeste.sodio;
+    document.getElementById('falta-oeste').innerText = stats.oeste.falta;
 
-      // Fuente de datos
-      map.addSource('puntos', { type: 'geojson', data: geojson });
+    // Cargar al mapa
+    map.addSource('puntos', { type: 'geojson', data: geojson });
 
-      // Colores para los puntos
-      const colorExpr = [
-        'case',
-        ['in', 'LED', ['upcase', ['to-string', ['get', CONFIG.campos.tecnologia]]]], '#38bdf8',
-        ['in', 'SODIO', ['upcase', ['to-string', ['get', CONFIG.campos.tecnologia]]]], '#fde047',
-        '#fda4af'
-      ];
+    // Colores desaturados
+    const colorExpr = [
+      'case',
+      ['in', 'LED', ['upcase', ['to-string', ['get', CONFIG.campos.tecnologia]]]], '#38bdf8',
+      ['in', 'SODIO', ['upcase', ['to-string', ['get', CONFIG.campos.tecnologia]]]], '#fde047',
+      '#fda4af'
+    ];
 
-      // Capa Este
-      map.addLayer({
-        id: 'capa-este',
-        type: 'circle',
-        source: 'puntos',
-        filter: ['==', ['get', CONFIG.campos.sector], CONFIG.tramos.este],
-        paint: {
-          'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 5, 14, 8],
-          'circle-color': colorExpr,
-          'circle-stroke-width': 1,
-          'circle-stroke-color': '#ffffff'
-        }
-      });
+    // Capa Este
+    map.addLayer({
+      id: 'capa-este',
+      type: 'circle',
+      source: 'puntos',
+      filter: ['==', ['get', CONFIG.campos.sector], CONFIG.tramos.este],
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 4, 14, 8],
+        'circle-color': colorExpr,
+        'circle-stroke-width': 1,
+        'circle-stroke-color': '#ffffff'
+      }
+    });
 
-      // Capa Oeste
-      map.addLayer({
-        id: 'capa-oeste',
-        type: 'circle',
-        source: 'puntos',
-        filter: ['==', ['get', CONFIG.campos.sector], CONFIG.tramos.oeste],
-        paint: {
-          'circle-radius': ['interpolate', ['linear'], ['zoom'], 10, 5, 14, 8],
-          'circle-color': colorExpr,
-          'circle-stroke-width': 1,
-          'circle-stroke-color': '#ffffff'
-        }
-      });
+    // Capa Oeste
+    map.addLayer({
+      id: 'capa-oeste',
+      type: 'circle',
+      source: 'puntos',
+      filter: ['==', ['get', CONFIG.campos.sector], CONFIG.tramos.oeste],
+      paint: {
+        'circle-radius': ['interpolate', ['linear'], ['zoom'], 9, 4, 14, 8],
+        'circle-color': colorExpr,
+        'circle-stroke-width': 1,
+        'circle-stroke-color': '#ffffff'
+      }
+    });
 
-    } catch (err) {
-      console.error(err);
-      alert("Error al cargar los datos: " + err.message + "\n\nRevisá que el archivo .geojson esté en la misma carpeta y que estés usando un servidor (Live Server).");
-    }
-  });
+  } catch (err) {
+    console.error(err);
+    alert("Error al cargar datos: " + err.message);
+  }
 });
