@@ -1,7 +1,7 @@
 window.LUX_CONFIG = {
   municipio: {
     center: [-68.55, -32.90],
-    zoom: 10
+    zoom: 9
   },
   fuentes: {
     corredor: './corredor_cuyo_2026_wgs84.geojson'
@@ -24,6 +24,19 @@ window.LUX_CONFIG = {
   estilosMapa: {
     light: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
     dark: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+    // Estilo "Google Maps" usando tiles de ESRI o similares
+    google: {
+      version: 8,
+      sources: {
+        'google-tiles': {
+          type: 'raster',
+          tiles: ['https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}'],
+          tileSize: 256,
+          attribution: '© Google'
+        }
+      },
+      layers: [{ id: 'google-layer', type: 'raster', source: 'google-tiles' }]
+    },
     satellite: {
       version: 8,
       sources: {
