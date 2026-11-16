@@ -1,6 +1,7 @@
 const CONFIG = window.LUX_CONFIG;
 let map;
 let capasVisibles = { este: true, oeste: true };
+let datosGeojson = null;
 
 function getProp(props, campo) {
   if (!props) return null;
@@ -25,12 +26,10 @@ function toggleLayer(tramo) {
   else btn.classList.remove('active');
 }
 
-function agregarCapas() {
-  if (!map.getSource('puntos')) return;
+function dibujarPuntos() {
+  if (!datosGeojson || !map.getSource('puntos')) return;
 
-  // PUNTOS GRANDES
-  const radioExpr = ['interpolate', ['linear'], ['zoom'], 8, 7, 12, 5, 15, 3];
-  
+  const radioExpr = ['interpolate', ['linear'], ['zoom'], 8, 7, 12, 5, 18, 3];
   const colorExpr = [
     'case',
     ['in', 'LED', ['upcase', ['to-string', ['get', CONFIG.campos.tecnologia]]]], '#38bdf8',
@@ -42,12 +41,7 @@ function agregarCapas() {
     map.addLayer({
       id: 'capa-este', type: 'circle', source: 'puntos',
       filter: ['==', ['get', CONFIG.campos.sector], CONFIG.tramos.este],
-      paint: {
-        'circle-radius': radioExpr,
-        'circle-color': colorExpr,
-        'circle-stroke-width': 0.5,
-        'circle-stroke-color': '#ffffff'
-      }
+      paint: { 'circle-radius': radioExpr, 'circle-color': colorExpr, 'circle-stroke-width': 0.5, 'circle-stroke-color': '#ffffff' }
     });
   }
 
@@ -55,17 +49,14 @@ function agregarCapas() {
     map.addLayer({
       id: 'capa-oeste', type: 'circle', source: 'puntos',
       filter: ['==', ['get', CONFIG.campos.sector], CONFIG.tramos.oeste],
-      paint: {
-        'circle-radius': radioExpr,
-        'circle-color': colorExpr,
-        'circle-stroke-width': 0.5,
-        'circle-stroke-color': '#ffffff'
-      }
+      paint: { 'circle-radius': radioExpr, 'circle-color': colorExpr, 'circle-stroke-width': 0.5, 'circle-stroke-color': '#ffffff' }
     });
   }
+
+  if (!capasVisibles.este) map.setLayoutProperty('capa-este', 'visibility', 'none');
+  if (!capasVisibles.oeste) map.setLayoutProperty('capa-oeste', 'visibility', 'none');
 }
 
-// Iniciamos con Google (que tiene maxZoom 20)
 map = new maplibregl.Map({
   container: 'mapa',
   style: CONFIG.estilosMapa.google, 
@@ -76,37 +67,36 @@ map = new maplibregl.Map({
 
 map.addControl(new maplibregl.NavigationControl(), 'top-left');
 
-// Escuchar cambio de mapa base
 document.getElementById('map-style-select').addEventListener('change', (e) => {
   const tipoMapa = e.target.value;
-  const estilo = CONFIG.estilosMapa[tipoMapa];
   
-  map.setStyle(estilo);
+  map.setMaxZoom(tipoMapa === 'google' ? 20 : (tipoMapa === 'satellite' ? 19 : 22));
+  
+  map.setStyle(CONFIG.estilosMapa[tipoMapa]);
 
-  // Ajustar límite de zoom según el proveedor
-  if (tipoMapa === 'google') {
-    map.setMaxZoom(20);
-  } else if (tipoMapa === 'satellite') {
-    map.setMaxZoom(19);
-  } else {
-    map.setMaxZoom(22);
-  }
-
-  map.once('styledata', () => setTimeout(() => agregarCapas(), 100));
+  // Esperar a que el nuevo mapa esté listo y reinyectar los puntos
+  map.once('styledata', () => {
+    setTimeout(() => {
+      if (datosGeojson) {
+        map.addSource('puntos', { type: 'geojson', data: datosGeojson });
+        dibujarPuntos();
+      }
+    }, 50); 
+  });
 });
 
 map.on('load', async () => {
   try {
     const res = await fetch(CONFIG.fuentes.corredor);
     if (!res.ok) throw new Error("No se pudo cargar el .geojson");
-    const geojson = await res.json();
+    datosGeojson = await res.json();
 
     let stats = { 
       este: { total: 0, led: 0, sodio: 0, falta: 0 }, 
       oeste: { total: 0, led: 0, sodio: 0, falta: 0 } 
     };
 
-    geojson.features.forEach(f => {
+    datosGeojson.features.forEach(f => {
       const p = f.properties;
       const sector = getProp(p, CONFIG.campos.sector);
       const tech = String(getProp(p, CONFIG.campos.tecnologia) || "").toUpperCase();
@@ -133,8 +123,8 @@ map.on('load', async () => {
     document.getElementById('sodio-oeste').innerText = stats.oeste.sodio;
     document.getElementById('falta-oeste').innerText = stats.oeste.falta;
 
-    map.addSource('puntos', { type: 'geojson', data: geojson });
-    agregarCapas();
+    map.addSource('puntos', { type: 'geojson', data: datosGeojson });
+    dibujarPuntos();
 
   } catch (err) {
     console.error(err);
