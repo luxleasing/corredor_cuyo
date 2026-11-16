@@ -1,0 +1,19 @@
+/* Ajuste: la card "before" (Tramo Este) usaba amarillo; ahora usamos un matiz neutro-ámbar */
+.kpi-card-before {
+  border-color: rgba(202,138,4,0.30);
+  background: linear-gradient(180deg, rgba(226,249,22,0.10) 0%, var(--bg-card-soft) 100%);
+}
+.kpi-card-after {
+  border-color: rgba(6,182,212,0.35);
+  background: linear-gradient(180deg, rgba(34,211,238,0.12) 0%, var(--bg-card-soft) 100%);
+  box-shadow: 0 0 0 1px rgba(6,182,212,0.08), 0 6px 20px -10px rgba(6,182,212,0.35);
+}
+
+/* Nuevo color para valor "Falta" (reusa kpi-val-otros) */
+.kpi-val-otros  { color: #f43f5e; }
+
+/* En mobile, el resumen colapsado muestra Este/Oeste */
+#kpi-summary .sum-pill.old { background: rgba(226,249,22,0.15); color: #ca8a04; }
+#kpi-summary .sum-pill.new { background: rgba(34,211,238,0.15); color: var(--cyan); }
+html.dark #kpi-summary .sum-pill.old { color: #e2f916; }
+html.dark #kpi-summary .sum-pill.new { color: #22d3ee; }
